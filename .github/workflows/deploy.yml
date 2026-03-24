@@ -22,4 +22,5 @@ jobs:
 
       - name: Upload to S3
         run: |
-          aws s3 cp index.html s3://my-idp-site-5fef7693/index.html
+          aws s3 cp index.html s3://my-idp-site-0652f8f0/index.html
+        
