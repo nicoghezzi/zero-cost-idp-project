@@ -1,4 +1,12 @@
-# 1. Keep the Role
+# --- 1. THE RECOVERY PIECE: OIDC Provider ---
+# This was missing! It creates the trust between GitHub and AWS.
+resource "aws_iam_openid_connect_provider" "github" {
+  url             = "https://token.actions.githubusercontent.com"
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = ["6938fd4d98bab03faadb97b34396831e3780aea1"]
+}
+
+# --- 2. IAM Role & Policy ---
 resource "aws_iam_role" "github_role" {
   name = "github-action-role"
   assume_role_policy = jsonencode({
@@ -6,19 +14,23 @@ resource "aws_iam_role" "github_role" {
     Statement = [{
         Action = "sts:AssumeRoleWithWebIdentity",
         Effect = "Allow",
-        Principal = { Federated = "arn:aws:iam::943066268094:oidc-provider/token.actions.githubusercontent.com" },
-        Condition = { StringLike = { "token.actions.githubusercontent.com:sub": "repo:nicoghezzi/zero-cost-idp-project:*" } }
+        Principal = { 
+          # We link directly to the provider created above
+          Federated = aws_iam_openid_connect_provider.github.arn 
+        },
+        Condition = { 
+          StringLike = { "token.actions.githubusercontent.com:sub": "repo:nicoghezzi/zero-cost-idp-project:*" } 
+        }
     }]
   })
 }
 
-# 2. ADD THIS BACK - This is why it was trying to delete the policy!
 resource "aws_iam_role_policy_attachment" "admin_policy" {
   role       = aws_iam_role.github_role.name
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
 
-# 3. S3 Infrastructure
+# --- 3. S3 Infrastructure ---
 resource "aws_s3_bucket" "website" {
   bucket = "my-idp-site-0652f8f0"
 }
@@ -36,7 +48,6 @@ resource "aws_s3_bucket_public_access_block" "public_access" {
   restrict_public_buckets = false
 }
 
-# 4. The Policy that fixes the 403 error
 resource "aws_s3_bucket_policy" "allow_public_read" {
   bucket = aws_s3_bucket.website.id
   policy = jsonencode({
@@ -51,8 +62,7 @@ resource "aws_s3_bucket_policy" "allow_public_read" {
   })
 }
 
-# --- FinOps: The Cost Shield ---
-
+# --- 4. FinOps: The Cost Shield ---
 resource "aws_budgets_budget" "zero_cost_limit" {
   name              = "idp-zero-cost-limit"
   budget_type       = "COST"
@@ -65,6 +75,11 @@ resource "aws_budgets_budget" "zero_cost_limit" {
     threshold                  = 80
     threshold_type             = "PERCENTAGE"
     notification_type          = "ACTUAL"
-    subscriber_email_addresses = ["YOUR_EMAIL@EXAMPLE.COM"] # <--- Update this!
+    subscriber_email_addresses = ["YOUR_EMAIL@EXAMPLE.COM"] # <--- REMEMBER TO UPDATE THIS
   }
+}
+
+# --- 5. Outputs ---
+output "website_url" {
+  value = aws_s3_bucket_website_configuration.site_config.website_endpoint
 }

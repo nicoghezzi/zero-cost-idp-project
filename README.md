@@ -46,10 +46,12 @@ The project implements a modern DevOps workflow where infrastructure is treated 
 * Terraform installed
 * GitHub Repository
 
-### Local Setup
-1. Clone the repo:
-   ```bash
-   git clone [https://github.com/nicoghezzi/zero-cost-idp-project.git](https://github.com/nicoghezzi/zero-cost-idp-project.git)
+## ## 🛡️ Governance & FinOps
+This IDP isn't just a deployment tool; it's a governed environment designed for 2026 cloud standards:
+
+* **Automated Cost Guardrails:** Implemented `aws_budgets_budget` via Terraform. The system automatically monitors spend and triggers email alerts if the project exceeds a $1.00 monthly threshold.
+* **Infrastructure Resilience:** The platform is designed to be "reconstructable." During development, we simulated a provider failure and used Terraform's state management to restore the OIDC trust-relationship in under 60 seconds.
+* **Identity Federation:** Zero long-lived IAM keys. All access is governed by temporary, least-privileged STS tokens.
 
 ## 🚀 Author
 Nicolas Ghezzi 
