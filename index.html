@@ -1,7 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internal Developer Platform</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; max-width: 400px; }
+        h1 { color: #2d3436; margin-bottom: 0.5rem; }
+        p { color: #636e72; }
+        .status { display: inline-block; padding: 0.25rem 0.75rem; background: #55efc4; color: #00b894; border-radius: 50px; font-weight: bold; font-size: 0.8rem; text-transform: uppercase; }
+    </style>
+</head>
 <body>
-    <h1>My Zero-Cost IDP Project is Live!</h1>
-    <p>Deployed via GitHub Actions and Terraform.</p>
+    <div class="card">
+        <div class="status">System Online</div>
+        <h1>IDP Portal</h1>
+        <p>Welcome, <strong>nicolasghezzi</strong>.</p>
+        <p>This environment was provisioned via Terraform and is being managed by GitHub Actions.</p>
+    </div>
 </body>
 </html>
