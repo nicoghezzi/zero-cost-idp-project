@@ -50,3 +50,21 @@ resource "aws_s3_bucket_policy" "allow_public_read" {
     }]
   })
 }
+
+# --- FinOps: The Cost Shield ---
+
+resource "aws_budgets_budget" "zero_cost_limit" {
+  name              = "idp-zero-cost-limit"
+  budget_type       = "COST"
+  limit_amount      = "1.0"
+  limit_unit        = "USD"
+  time_unit         = "MONTHLY"
+
+  notification {
+    comparison_operator        = "GREATER_THAN"
+    threshold                  = 80
+    threshold_type             = "PERCENTAGE"
+    notification_type          = "ACTUAL"
+    subscriber_email_addresses = ["YOUR_EMAIL@EXAMPLE.COM"] # <--- Update this!
+  }
+}
