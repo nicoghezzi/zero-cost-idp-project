@@ -38,3 +38,37 @@ resource "aws_iam_role_policy_attachment" "admin_policy" {
 output "github_role_arn" {
   value = aws_iam_role.github_role.arn
 }
+
+# This creates a unique name for your bucket
+resource "random_id" "bucket_suffix" {
+  byte_length = 4
+}
+
+# This creates the actual S3 Bucket (The "Folder" in the Cloud)
+resource "aws_s3_bucket" "website" {
+  bucket = "my-idp-site-${random_id.bucket_suffix.hex}"
+}
+
+# This tells AWS the bucket is for a Website
+resource "aws_s3_bucket_website_configuration" "site_config" {
+  bucket = aws_s3_bucket.website.id
+
+  index_document {
+    suffix = "index.html"
+  }
+}
+
+# This makes the bucket public so people can see your site
+resource "aws_s3_bucket_public_access_block" "public_access" {
+  bucket = aws_s3_bucket.website.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+# This prints the URL of your new website
+output "website_url" {
+  value = aws_s3_bucket_website_configuration.site_config.website_endpoint
+}
