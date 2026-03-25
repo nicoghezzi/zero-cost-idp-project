@@ -46,7 +46,7 @@ The project implements a modern DevOps workflow where infrastructure is treated 
 * Terraform installed
 * GitHub Repository
 
-## ## 🛡️ Governance & FinOps
+## 🛡️ Governance & FinOps
 This IDP isn't just a deployment tool; it's a governed environment designed for 2026 cloud standards:
 
 * **Automated Cost Guardrails:** Implemented `aws_budgets_budget` via Terraform. The system automatically monitors spend and triggers email alerts if the project exceeds a $1.00 monthly threshold.
