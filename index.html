@@ -3,28 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Internal Developer Platform</title>
+    <title>IDP Portal | Nicolas Ghezzi</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; max-width: 400px; }
-        h1 { color: #2d3436; margin-bottom: 0.5rem; }
-        p { color: #636e72; }
-        .status { display: inline-block; padding: 0.25rem 0.75rem; background: #55efc4; color: #00b894; border-radius: 50px; font-weight: bold; font-size: 0.8rem; text-transform: uppercase; }
+        :root {
+            --primary: #0984e3;
+            --success: #00b894;
+            --bg: #f5f7fa;
+            --card-bg: #ffffff;
+        }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        .status-badge {
+            background: #e6fffb;
+            color: var(--success);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid var(--success);
+        }
+        h1 { margin: 1.5rem 0 0.5rem; color: #2d3436; font-size: 1.8rem; }
+        p { color: #636e72; line-height: 1.6; margin-bottom: 2rem; }
+        
+        .feature-list {
+            text-align: left;
+            background: #f9f9f9;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        .feature-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin: 8px 0;
+        }
+        .label { font-weight: 600; color: #2d3436; }
+        .value { color: var(--primary); }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: opacity 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover { opacity: 0.9; }
+        .footer-link {
+            margin-top: 1.5rem;
+            font-size: 0.75rem;
+            color: #b2bec3;
+        }
     </style>
 </head>
 <body>
     <div class="card">
-        <div class="status">System Online</div>
+        <span class="status-badge">● System Online</span>
         <h1>IDP Portal</h1>
-        <p>Welcome, <strong>nicolasghezzi</strong>.</p>
+        <p>Infrastructure managed by <strong>Nicolas Ghezzi</strong></p>
         
-        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+        <div class="feature-list">
+            <div class="feature-item">
+                <span class="label">🚀 Golden Path</span>
+                <span class="value">S3 Static Site</span>
+            </div>
+            <div class="feature-item">
+                <span class="label">🔐 Auth Method</span>
+                <span class="value">OIDC Keyless</span>
+            </div>
+            <div class="feature-item">
+                <span class="label">💰 FinOps</span>
+                <span class="value" style="color:var(--success)">$1.00 Limit Active</span>
+            </div>
+        </div>
+
+        <button class="btn" onclick="copyLink()">Copy Share Link</button>
         
-        <div style="text-align: left; font-size: 0.9rem;">
-            <p><strong>🚀 Golden Path:</strong> Static Site S3</p>
-            <p><strong>🔐 Security:</strong> OIDC Keyless (Active)</p>
-            <p><strong>💰 FinOps:</strong> <span style="color: #00b894;">$1.00 Monthly Limit Active</span></p>
+        <div class="footer-link">
+            Short URL: bit.ly/zero-cost-idp-bynico
         </div>
     </div>
+
+    <script>
+        function copyLink() {
+            const el = document.createElement('textarea');
+            el.value = 'https://bit.ly/zero-cost-idp-bynico';
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            alert('Link copied to clipboard!');
+        }
+    </script>
 </body>
 </html>
