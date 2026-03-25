@@ -48,9 +48,10 @@ Most beginner projects use "IAM User Keys" stored in GitHub Secrets. This projec
 3. **Automated Governance:** Security is "baked into" the Terraform code, ensuring every environment is born secure.
 
 ### 🔑 The Security "Proof"
-We use a scoped IAM Trust Policy to ensure 100% secretless deployments:
-- **No IAM Keys:** Authenticated via OIDC.
-- **Repository Scoping:** `Condition = { "token.actions.githubusercontent.com:sub": "repo:YOUR_REPO:*" }`
+This platform implements **Least Privilege Access** by scoping the OIDC trust relationship to a specific GitHub identity.
+- **Method:** OIDC Federation (No AWS Access Keys stored).
+- **Scope:** Restricted to this specific repository via the `sub` claim.
+- **Policy Condition:** `"token.actions.githubusercontent.com:sub": "repo:nicoghezzi/zero-cost-idp-project:*"`
 
 ---
 
