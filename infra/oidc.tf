@@ -15,7 +15,7 @@ resource "aws_iam_role" "github_role" {
         Action = "sts:AssumeRoleWithWebIdentity",
         Effect = "Allow",
         Principal = { 
-          # We link directly to the provider created above
+          # This is the "Proof" of Shift-Left Security
           Federated = aws_iam_openid_connect_provider.github.arn 
         },
         Condition = { 

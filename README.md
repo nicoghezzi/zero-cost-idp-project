@@ -1,5 +1,6 @@
 # 🚀 Zero-Cost Internal Developer Platform (IDP)
 
+![Security: OIDC](https://img.shields.io/badge/Security-OIDC%20Keyless-green?style=for-the-badge&logo=shield)
 ![Terraform](https://img.shields.io/badge/terraform-%235835CC.svg?style=for-the-badge&logo=terraform&logoColor=white)
 ![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white)
 ![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)
@@ -36,6 +37,20 @@ The project implements a modern DevOps workflow where infrastructure is treated 
 * **State Management:** Local Terraform state tracking for modular updates.
 * **Automated Sync:** GitHub Actions automatically invalidates and updates the S3 content.
 * **Public Read Access:** Custom JSON bucket policies for granular permission control.
+
+---
+
+## 🔒 Shift-Left Security: The OIDC Master
+Most beginner projects use "IAM User Keys" stored in GitHub Secrets. This project implements a **Senior-level security posture**:
+
+1. **No Secrets:** No AWS keys are stored in this repository.
+2. **Identity Handshake:** Uses the `aws-actions/configure-aws-credentials` action to perform a cryptographic handshake with AWS.
+3. **Automated Governance:** Security is "baked into" the Terraform code, ensuring every environment is born secure.
+
+### 🔑 The Security "Proof"
+We use a scoped IAM Trust Policy to ensure 100% secretless deployments:
+- **No IAM Keys:** Authenticated via OIDC.
+- **Repository Scoping:** `Condition = { "token.actions.githubusercontent.com:sub": "repo:YOUR_REPO:*" }`
 
 ---
 
