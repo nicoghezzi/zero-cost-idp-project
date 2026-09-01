@@ -27,7 +27,7 @@ resource "aws_iam_role" "github_role" {
 
 resource "aws_iam_role_policy_attachment" "admin_policy" {
   role       = aws_iam_role.github_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess" // this is a biggest security risks, but for real production I "Nicolas Ghezzi" wouldn't use.
 }
 
 # --- 3. S3 Infrastructure ---
