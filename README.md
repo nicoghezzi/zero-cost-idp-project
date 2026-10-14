@@ -30,6 +30,20 @@ The project implements a modern DevOps workflow where infrastructure is treated 
 
 ---
 
+## 🧠 Engineering Decisions & Trade-offs
+
+| Decision | Rationale | Trade-off |
+|---|---|---|
+| **OIDC over static AWS keys** | Avoids storing long-lived AWS credentials in GitHub Secrets and uses temporary STS credentials. | Requires carefully scoped trust policies, workflow permissions, and IAM role permissions. |
+| **Terraform over manual provisioning** | Makes infrastructure repeatable, reviewable, and version-controlled. | Introduces state-management responsibilities and the need to review plans before applying changes. |
+| **S3 over containers or Kubernetes** | Keeps hosting simple and avoids unnecessary compute and orchestration for a static website. | S3 static website endpoints do not provide HTTPS directly; a production design could use CloudFront and TLS. |
+| **Local Terraform state** | Keeps the initial project simple without additional backend infrastructure. | Less suitable for team collaboration and recovery; a shared environment should use protected remote state and appropriate locking. |
+| **AWS Budgets for cost monitoring** | Provides visibility through configurable spending thresholds and email alerts. | Alerts do not enforce a hard spending limit, and billing data may be delayed. |
+
+These decisions prioritize simplicity, reduced credential exposure, repeatability, and cost awareness while documenting the limitations that would need to be addressed as the platform scales.
+
+---
+
 ## 🔒 Shift-Left Security: The OIDC Master
 Most beginner projects use "IAM User Keys" stored in GitHub Secrets. This project uses identity federation to reduce reliance on long-lived credentials.
 
@@ -43,20 +57,6 @@ The OIDC trust relationship restricts access using the GitHub identity's `sub` c
 - **Method:** OIDC Federation with temporary STS credentials.
 - **Scope:** Restricted to the specified GitHub repository.
 - **Policy Condition:** `"token.actions.githubusercontent.com:sub": "repo:nicoghezzi/zero-cost-idp-project:*"`
-
----
-
-## 🧠 Engineering Decisions & Trade-offs
-
-| Decision | Rationale | Trade-off |
-|---|---|---|
-| **OIDC over static AWS keys** | Avoids storing long-lived AWS credentials in GitHub Secrets and uses temporary STS credentials. | Requires carefully scoped trust policies, workflow permissions, and IAM role permissions. |
-| **Terraform over manual provisioning** | Makes infrastructure repeatable, reviewable, and version-controlled. | Introduces state-management responsibilities and the need to review plans before applying changes. |
-| **S3 over containers or Kubernetes** | Keeps hosting simple and avoids unnecessary compute and orchestration for a static website. | S3 static website endpoints do not provide HTTPS directly; a production design could use CloudFront and TLS. |
-| **Local Terraform state** | Keeps the initial project simple without additional backend infrastructure. | Less suitable for team collaboration and recovery; a shared environment should use protected remote state and appropriate locking. |
-| **AWS Budgets for cost monitoring** | Provides visibility through configurable spending thresholds and email alerts. | Alerts do not enforce a hard spending limit, and billing data may be delayed. |
-
-These decisions prioritize simplicity, reduced credential exposure, repeatability, and cost awareness while documenting the limitations that would need to be addressed as the platform scales.
 
 ---
 
