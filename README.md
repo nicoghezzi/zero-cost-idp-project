@@ -15,20 +15,10 @@ A production-ready, **$0-cost** automated infrastructure pipeline. This project 
 ## 🏗️ Architecture
 The project implements a modern DevOps workflow where infrastructure is treated as code, and security is handled via identity federation.
 
-
-
 1. **Infrastructure:** Provisioned via **Terraform** (S3, IAM, OIDC).
 2. **Security:** **Keyless Authentication** using AWS IAM Identity Providers (OIDC).
 3. **Frontend:** Responsive HTML5/CSS3 portal.
 4. **CI/CD:** Automated deployment via **GitHub Actions** on every `git push`.
-
----
-
-## 🛠️ Tech Stack
-* **Cloud:** Amazon Web Services (S3, IAM)
-* **IaC:** Terraform v1.x
-* **CI/CD:** GitHub Actions
-* **Security:** OIDC Federation (No AWS Access Keys stored in GitHub)
 
 ---
 
@@ -41,33 +31,44 @@ The project implements a modern DevOps workflow where infrastructure is treated 
 ---
 
 ## 🔒 Shift-Left Security: The OIDC Master
-Most beginner projects use "IAM User Keys" stored in GitHub Secrets. This project implements a **Senior-level security posture**:
+Most beginner projects use "IAM User Keys" stored in GitHub Secrets. This project uses identity federation to reduce reliance on long-lived credentials.
 
-1. **No Secrets:** No AWS keys are stored in this repository.
-2. **Identity Handshake:** Uses the `aws-actions/configure-aws-credentials` action to perform a cryptographic handshake with AWS.
-3. **Automated Governance:** Security is "baked into" the Terraform code, ensuring every environment is born secure.
+1. **No Static AWS Keys:** No AWS access keys are stored in this repository.
+2. **Identity Federation:** Uses `aws-actions/configure-aws-credentials` to authenticate GitHub Actions with AWS through OIDC.
+3. **Automated Governance:** Infrastructure and access policies are defined in Terraform for consistent, repeatable provisioning.
 
-### 🔑 The Security "Proof"
-This platform implements **Least Privilege Access** by scoping the OIDC trust relationship to a specific GitHub identity.
-- **Method:** OIDC Federation (No AWS Access Keys stored).
-- **Scope:** Restricted to this specific repository via the `sub` claim.
+### 🔑 The Security Proof
+The OIDC trust relationship restricts access using the GitHub identity's `sub` claim.
+
+- **Method:** OIDC Federation with temporary STS credentials.
+- **Scope:** Restricted to the specified GitHub repository.
 - **Policy Condition:** `"token.actions.githubusercontent.com:sub": "repo:nicoghezzi/zero-cost-idp-project:*"`
 
 ---
 
-## 🚀 Deployment Instructions
+## 🧠 Engineering Decisions & Trade-offs
 
-### Prerequisites
-* AWS CLI configured
-* Terraform installed
-* GitHub Repository
+| Decision | Rationale | Trade-off |
+|---|---|---|
+| **OIDC over static AWS keys** | Avoids storing long-lived AWS credentials in GitHub Secrets and uses temporary STS credentials. | Requires carefully scoped trust policies, workflow permissions, and IAM role permissions. |
+| **Terraform over manual provisioning** | Makes infrastructure repeatable, reviewable, and version-controlled. | Introduces state-management responsibilities and the need to review plans before applying changes. |
+| **S3 over containers or Kubernetes** | Keeps hosting simple and avoids unnecessary compute and orchestration for a static website. | S3 static website endpoints do not provide HTTPS directly; a production design could use CloudFront and TLS. |
+| **Local Terraform state** | Keeps the initial project simple without additional backend infrastructure. | Less suitable for team collaboration and recovery; a shared environment should use protected remote state and appropriate locking. |
+| **AWS Budgets for cost monitoring** | Provides visibility through configurable spending thresholds and email alerts. | Alerts do not enforce a hard spending limit, and billing data may be delayed. |
+
+These decisions prioritize simplicity, reduced credential exposure, repeatability, and cost awareness while documenting the limitations that would need to be addressed as the platform scales.
+
+---
 
 ## 🛡️ Governance & FinOps
-This IDP isn't just a deployment tool; it's a governed environment designed for 2026 cloud standards:
 
-* **Automated Cost Guardrails:** Implemented `aws_budgets_budget` via Terraform. The system automatically monitors spend and triggers email alerts if the project exceeds a $1.00 monthly threshold.
-* **Infrastructure Resilience:** The platform is designed to be "reconstructable." During development, we simulated a provider failure and used Terraform's state management to restore the OIDC trust-relationship in under 60 seconds.
-* **Identity Federation:** Zero long-lived IAM keys. All access is governed by temporary, least-privileged STS tokens.
+This project incorporates cost monitoring and infrastructure recovery into the deployment workflow.
+
+* **Automated Cost Guardrails:** Implements `aws_budgets_budget` through Terraform, with email alerts configured for a $1.00 monthly threshold.
+* **Infrastructure Resilience:** During development, simulated a provider failure and used Terraform state management to restore the OIDC trust relationship in under 60 seconds.
+* **Identity Federation:** Eliminates long-lived AWS access keys from the GitHub Actions authentication workflow.
+
+**Scope:** This is a cost-conscious reference implementation, not a guarantee of zero operating cost or complete production readiness.
 
 ## 🚀 Author
 Nicolas Ghezzi 
